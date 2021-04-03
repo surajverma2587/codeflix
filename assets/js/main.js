@@ -17,13 +17,45 @@ const constructMovieCard = (movie) =>
     </div>
   </div>`;
 
-const renderMovieCards = (movies) => {
-  const cards = movies.map(constructMovieCard);
+const constructFavouriteMovieCard = (movie) =>
+  `<div class="card m-4" style="width: 18rem" data-role="movieCard" data-poster="${movie.Poster}" data-title="${movie.Title}" data-imdb-id="${movie.imdbID}" data-year="${movie.Year}">
+    <img
+      src="${movie.Poster}"
+      class="card-img-top"
+      alt="${movie.Title}"
+    />
+    <div class="card-body text-center">
+      <h4 class="card-title">${movie.Title}</h4>
+      <p class="card-text text-muted fs-6">${movie.Year}</p>
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary" type="button">More Info</button>
+        <button class="btn btn-danger" type="button">
+          Remove from Favourites
+        </button>
+      </div>
+    </div>
+  </div>`;
 
-  $("#cards-container").empty();
-  $("#cards-container").append(cards);
+const renderMovieCards = (movies, isFavourites = false) => {
+  if (!movies.length) {
+    renderNoMoviesContainer();
+  } else {
+    let cards;
+    if (isFavourites) {
+      cards = movies.map(constructFavouriteMovieCard);
+    } else {
+      cards = movies.map(constructMovieCard);
+    }
 
-  $("[data-role='movieCard']").click(onClickFavourite);
+    $("#cards-container").empty();
+    $("#cards-container").append(cards);
+
+    if (isFavourites) {
+      $("[data-role='movieCard']").click(onClickRemoveFavourite);
+    } else {
+      $("[data-role='movieCard']").click(onClickAddFavourite);
+    }
+  }
 };
 
 const renderNoMoviesContainer = () => {
@@ -92,7 +124,7 @@ const addToLocalStorage = (data) => {
   localStorage.setItem("favouriteMovies", JSON.stringify(favouriteMovies));
 };
 
-const onClickFavourite = () => {
+const onClickAddFavourite = () => {
   const currentTarget = $(event.currentTarget);
   const dataAttributes = currentTarget.data();
 
@@ -100,16 +132,36 @@ const onClickFavourite = () => {
     Title: dataAttributes.title,
     Poster: dataAttributes.poster,
     Year: dataAttributes.year,
-    ImdbId: dataAttributes.imdbId,
+    imdbID: dataAttributes.imdbId,
   };
 
   addToLocalStorage(newObject);
 };
 
+const onClickRemoveFavourite = () => {
+  const favouriteMovies = JSON.parse(localStorage.getItem("favouriteMovies"));
+
+  const currentTarget = $(event.currentTarget);
+  const dataAttributes = currentTarget.data();
+
+  const callback = (each) => {
+    return each.imdbID !== dataAttributes.imdbId;
+  };
+
+  const filteredFavouriteMovies = favouriteMovies.filter(callback);
+
+  renderMovieCards(filteredFavouriteMovies, true);
+
+  localStorage.setItem(
+    "favouriteMovies",
+    JSON.stringify(filteredFavouriteMovies)
+  );
+};
+
 const onClickFavourites = () => {
   const favouriteMovies = localStorage.getItem("favouriteMovies");
 
-  renderMovieCards(JSON.parse(favouriteMovies));
+  renderMovieCards(JSON.parse(favouriteMovies), true);
 };
 
 $(document).ready(onLoad);
@@ -117,3 +169,5 @@ $(document).ready(onLoad);
 $("#basic-search-form").submit(onSubmitBasicSearch);
 
 $("#favourites").click(onClickFavourites);
+
+$("#home").click(onLoad);
