@@ -1,5 +1,5 @@
 const constructMovieCard = (movie) =>
-  `<div class="card m-4" style="width: 18rem">
+  `<div class="card m-4" style="width: 18rem" data-role="movieCard" data-poster="${movie.Poster}" data-title="${movie.Title}" data-imdb-id="${movie.imdbID}" data-year="${movie.Year}">
     <img
       src="${movie.Poster}"
       class="card-img-top"
@@ -11,7 +11,7 @@ const constructMovieCard = (movie) =>
       <div class="d-grid gap-2">
         <button class="btn btn-primary" type="button">More Info</button>
         <button class="btn btn-success" type="button">
-          Add to Favorites
+          Add to Favourites
         </button>
       </div>
     </div>
@@ -22,6 +22,8 @@ const renderMovieCards = (movies) => {
 
   $("#cards-container").empty();
   $("#cards-container").append(cards);
+
+  $("[data-role='movieCard']").click(onClickFavourite);
 };
 
 const renderNoMoviesContainer = () => {
@@ -58,7 +60,16 @@ const fetchData = (url) => {
     .catch(functionToHandleError);
 };
 
+const initialiseLocalStorage = () => {
+  const localStorageData = localStorage.getItem("favouriteMovies");
+
+  if (!localStorageData) {
+    localStorage.setItem("favouriteMovies", JSON.stringify([]));
+  }
+};
+
 const onLoad = () => {
+  initialiseLocalStorage();
   fetchData("http://www.omdbapi.com/?s=avengers&apikey=ba22d6b7");
 };
 
@@ -71,6 +82,28 @@ const onSubmitBasicSearch = (event) => {
   } else {
     console.log("NO Search term");
   }
+};
+
+const addToLocalStorage = (data) => {
+  const favouriteMovies = JSON.parse(localStorage.getItem("favouriteMovies"));
+
+  favouriteMovies.push(data);
+
+  localStorage.setItem("favouriteMovies", JSON.stringify(favouriteMovies));
+};
+
+const onClickFavourite = () => {
+  const currentTarget = $(event.currentTarget);
+  const dataAttributes = currentTarget.data();
+
+  const newObject = {
+    Title: dataAttributes.title,
+    Poster: dataAttributes.poster,
+    Year: dataAttributes.year,
+    ImdbId: dataAttributes.imdbId,
+  };
+
+  addToLocalStorage(newObject);
 };
 
 $(document).ready(onLoad);
