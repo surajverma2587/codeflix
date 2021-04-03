@@ -20,7 +20,16 @@ const constructMovieCard = (movie) =>
 const renderMovieCards = (movies) => {
   const cards = movies.map(constructMovieCard);
 
+  $("#cards-container").empty();
   $("#cards-container").append(cards);
+};
+
+const renderNoMoviesContainer = () => {
+  const noMoviesComponent = `<h3 class="my-4 text-white">No movies found</h3>`;
+
+  $("#cards-container").empty();
+
+  $("#cards-container").append(noMoviesComponent);
 };
 
 const fetchData = (url) => {
@@ -33,7 +42,7 @@ const fetchData = (url) => {
 
   const functionForApplication = (dataFromServer) => {
     if (dataFromServer.Error) {
-      throw new Error(dataFromServer.Error);
+      renderNoMoviesContainer();
     } else {
       renderMovieCards(dataFromServer.Search);
     }
@@ -53,4 +62,17 @@ const onLoad = () => {
   fetchData("http://www.omdbapi.com/?s=avengers&apikey=ba22d6b7");
 };
 
+const onSubmitBasicSearch = (event) => {
+  event.preventDefault();
+  const searchTerm = $("#basic-search-input").val();
+
+  if (searchTerm) {
+    fetchData(`http://www.omdbapi.com/?s=${searchTerm}&apikey=ba22d6b7`);
+  } else {
+    console.log("NO Search term");
+  }
+};
+
 $(document).ready(onLoad);
+
+$("#basic-search-form").submit(onSubmitBasicSearch);

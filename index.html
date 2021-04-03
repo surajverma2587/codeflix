@@ -34,30 +34,23 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul
-              class="navbar-nav me-auto mb-2 mb-lg-0 w-100 justify-content-between"
+              class="navbar-nav me-auto mb-2 mb-lg-0 w-100 justify-content-end"
             >
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropdown"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Type
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="#">Movies</a></li>
-                  <li><a class="dropdown-item" href="#">Series</a></li>
-                  <li>
-                    <a class="dropdown-item" href="#">Episodes</a>
-                  </li>
-                </ul>
-              </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Favourites</a>
               </li>
+              <form class="d-flex" id="basic-search-form">
+                <input
+                  class="form-control me-2"
+                  type="search"
+                  placeholder="Search movie"
+                  aria-label="Search"
+                  id="basic-search-input"
+                />
+                <button class="btn btn-outline-success" type="submit">
+                  Search
+                </button>
+              </form>
             </ul>
           </div>
         </div>
