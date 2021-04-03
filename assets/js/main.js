@@ -106,6 +106,14 @@ const onClickFavourite = () => {
   addToLocalStorage(newObject);
 };
 
+const onClickFavourites = () => {
+  const favouriteMovies = localStorage.getItem("favouriteMovies");
+
+  renderMovieCards(JSON.parse(favouriteMovies));
+};
+
 $(document).ready(onLoad);
 
 $("#basic-search-form").submit(onSubmitBasicSearch);
+
+$("#favourites").click(onClickFavourites);
